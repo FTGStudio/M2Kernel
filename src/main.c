@@ -25,9 +25,45 @@
  *
  */
 
+void unpriv_to_priv() __attribute__((naked));
+void priv_to_unpriv() __attribute__((naked));
+
 int
 main(void)
 {
   printf("" "\n");
   return 0;
+}
+
+/*
+ * void unpriv_to_priv()
+ *
+ * This is a naked function to switch between unpriveleged to
+ * priveleged for a thread
+ *
+ */
+void unpriv_to_priv()
+{
+	asm volatile("MRS R3, CONTROL\n"
+	             "AND R3, R3, #0\n"
+	             "MSR CONTROL, R3\n"
+	             "ISB\n"
+				 "BX LR");
+}
+
+/*
+ * void priv_to_unpriv()
+ *
+ * This is a naked function to switch between priveleged to
+ * unpriveleged for a thread
+ *
+ */
+void priv_to_unpriv()
+{
+	asm volatile("MRS R3, CONTROL\n"
+			   	 "ORR R3, R3, #1\n"
+	             "MSR CONTROL, R3\n"
+	             "ISB\n"
+	             "BX LR");
+
 }
